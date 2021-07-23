@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Visualizer</title>
+    <!-- <script data-main="scripts/main.js" src="scripts/require.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="content-container">
+        <div class="nav bg-gray-800">
+            <div class="buttons">
+                <div class="btn executeHTML">Run HTML</div>
+                <div class="btn executeJS">Run JS</div>
+            </div>
+        </div>
+        <div class="editors ">
+            <div id="jsEditor"></div>
+            <div id="htmlEditor"></div>
+        </div>
+    </div>
+
+
+    <script>
+        let renderHTML, renderJS = false;
+
+        // JS Editor
+        var editor1 = ace.edit("jsEditor");
+        editor1.setTheme("ace/theme/tomorrow");
+        editor1.session.setMode("ace/mode/javascript");
+
+        editor1.setValue(`function foo(items) {\n\tvar x = "All this is syntax highlighted";\n\treturn x;\n}`);
+
+        // HTML Editor
+        var editor2 = ace.edit("htmlEditor");
+        editor2.setTheme("ace/theme/monokai");
+        editor2.session.setMode("ace/mode/html");
+
+        editor2.setValue('<button id="test">test</button>')
+
+        console.log(editor1.getValue());
+
+        const test = () => {
+            console.log(editor2.getValue());
+        }
+
+        $(".executeHTML").click(() => {
+            renderHTML = !renderHTML;
+
+            if (renderHTML) {
+
+            }
+            console.log(renderHTML)
+        })
+
+        $(".executeJS").click(() => {
+            renderJS = !renderJS;
+
+            if (renderJS) {
+                console.log(eval(editor1.getValue()))
+            }
+            console.log(renderJS)
+        })
+    </script>
+</body>
+
+</html>
