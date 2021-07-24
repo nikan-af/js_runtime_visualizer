@@ -8,6 +8,8 @@
     <!-- <script data-main="scripts/main.js" src="scripts/require.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"
+        type="text/javascript"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="index.css">
 </head>
@@ -20,15 +22,29 @@
                 <div class="btn executeJS">Run JS</div>
             </div>
         </div>
-        <div class="editors ">
-            <div id="jsEditor"></div>
-            <div id="htmlEditor"></div>
+        <div class="content-body">
+            <div class="editors ">
+                <div id="jsEditor"></div>
+                <div id="htmlEditor"></div>
+            </div>
+            <div id="horizontal-drag-handle"></div>
+            <div class="display-container">
+                <div id="html-viewer">
+                </div>
+                <div id="console">
+                </div>
+            </div>
         </div>
     </div>
 
 
     <script>
         let renderHTML, renderJS = false;
+        var prevClientX = 0;
+        let dragMaxClientX = window.innerWidth;
+        let dragging = false;
+        var iframe = document.createElement('iframe');
+        $("#html-viewer").append(iframe);
 
         // JS Editor
         var editor1 = ace.edit("jsEditor");
@@ -46,17 +62,20 @@
 
         console.log(editor1.getValue());
 
+        // Console
+        var editor3 = ace.edit("console");
+        editor3.setTheme("ace/theme/terminal");
+        editor3.session.setMode("ace/mode/html");
+
         const test = () => {
+            console.trace();
             console.log(editor2.getValue());
         }
 
         $(".executeHTML").click(() => {
-            renderHTML = !renderHTML;
-
-            if (renderHTML) {
-
-            }
-            console.log(renderHTML)
+            iframe.contentWindow.document.open();
+            iframe.contentWindow.document.write(editor2.getValue());
+            iframe.contentWindow.document.close();
         })
 
         $(".executeJS").click(() => {
@@ -64,9 +83,41 @@
 
             if (renderJS) {
                 console.log(eval(editor1.getValue()))
+                console.trace();
             }
             console.log(renderJS)
         })
+
+        window.addEventListener('resize', () => {
+            console.log(window.innerWidth)
+            dragMaxClientX = window.innerWidth;
+        })
+
+        $("#horizontal-drag-handle").on('mousedown', (e) => {
+            dragging = true;
+            prevClientX = e.clientX;
+        })
+
+        $("body").on('mousemove', (e) => {
+            e.preventDefault();
+            if (dragging && e.clientX < dragMaxClientX * 0.7 && e.clientX > dragMaxClientX * 0.3) {
+                let distance = e.clientX - prevClientX;
+                console.log('distance: ', distance)
+                const editorsWidth = $(".editors").width();
+                const displayContainerWidth = $(".display-container").width();
+
+                $(".editors").width(editorsWidth + distance);
+                $(".display-container").width(displayContainerWidth - distance);
+            }
+
+            prevClientX = e.clientX;
+        })
+
+        $("body").on('mouseup', (e) => {
+            dragging = false;
+        })
+
+        console.trace()
     </script>
 </body>
 
